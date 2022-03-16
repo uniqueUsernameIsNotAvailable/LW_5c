@@ -149,3 +149,82 @@ void _radixSort(int *left, int *right, int N) {
 void radixSort(int *a, size_t n) {
     _radixSort(a, a + n, 8);
 }
+
+
+long long insertionSortN(int *a, size_t size) {
+    long long countComp = 0;
+    for (size_t i = 1; i < size && ++countComp; i++) {
+        int t = a[i];
+        size_t j = i;
+        while (j > 0 && ++countComp && a[j - 1] > t && ++countComp) {
+            a[j] = a[j - 1];
+            j--;
+        }
+        a[j] = t;
+    }
+    return countComp;
+}
+
+long long bubbleSortN(int *a, size_t size) {
+    long long countComp = 0;
+    for (size_t i = 0; i < size - 1 && ++countComp; i++)
+        for (size_t j = size - 1; j > i && ++countComp; j--)
+            if (a[j - 1] > a[j] && ++countComp)
+                swap(&a[j - 1], &a[j]);
+
+    return countComp;
+}
+
+long long combsortN(int *a, const size_t size) {
+    size_t step = size;
+    int swapped = 1;
+    long long countComp = 0;
+    while (step > 1 && ++countComp || swapped && ++countComp) {
+        if (step > 1 && ++countComp)
+            step /= 1.24733;
+        swapped = 0;
+        for (size_t i = 0, j = i + step; j < size && ++countComp; ++i, ++j)
+            if (a[i] > a[j] && ++countComp) {
+                swap(&a[i], &a[j]);
+                swapped = 1;
+            }
+    }
+    return countComp;
+}
+
+long long shellSortN(int *a, size_t size) {
+    long long countComp = 0;
+    for (size_t step = size / 2; step > 0 && ++countComp; step /= 2)
+        for (size_t i = step; i < size && ++countComp; i++) {
+            int tmp = a[i];
+            size_t j;
+            for (j = i; j >= step && ++countComp; j -= step) {
+                if (tmp < a[j - step] && ++countComp)
+                    a[j] = a[j - step];
+                else
+                    break;
+            }
+            a[j] = tmp;
+        }
+    return countComp;
+}
+
+
+
+
+
+
+long long selectionSortN(int *a, size_t size) {
+    long long countComp = 0;
+    for (int i = 0; i < size - 1 && ++countComp; i++) {
+        int minPos = i;
+        for (int j = i + 1; j < size && ++countComp; j++)
+            if (a[j] < a[minPos] && ++countComp)
+                minPos = j;
+        swap(&a[i], &a[minPos]);
+    }
+    return countComp;
+}
+
+
+

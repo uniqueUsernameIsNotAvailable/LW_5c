@@ -37,3 +37,13 @@ void combsort(int *a, size_t size);
 void shellSort(int *a, size_t size);
 
 void radixSort(int *a, size_t n);
+
+long long insertionSortN(int *a, size_t size);
+
+long long bubbleSortN(int *a, size_t size);
+
+long long combsortN(int *a, size_t size);
+
+long long shellSortN(int *a, size_t size);
+
+long long selectionSortN(int *a, size_t size);
