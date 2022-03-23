@@ -43,11 +43,10 @@ clock_t sort_time = end_time - start_time;
 }
 
 
-void
-checkTime(void (*sortFunc )(int *, size_t), void (*generateFunc )(int *, size_t), size_t size, char *experimentName) {
+void checkTime(void (*sortFunc )(int *, size_t), void (*generateFunc )(int *, size_t), size_t size, char *experimentName) {
     static size_t runCounter = 1;
 
-    static int innerBuffer[100000];
+    static int innerBuffer[200000];
     generateFunc(innerBuffer, size);
     printf("Run #% zu| ", runCounter++);
     printf(" Name : %s\n", experimentName);
@@ -76,21 +75,18 @@ checkTime(void (*sortFunc )(int *, size_t), void (*generateFunc )(int *, size_t)
     }
 }
 
-void checkNComp(long long (*nComp )(int *a, size_t n),
-                void (*generateFunc)(int *, size_t),
-                size_t size, char *experimentName, char *name) {
+void checkNComp(long long (*nComp )(int *a, size_t n), void (*generateFunc)(int *, size_t), size_t size,
+                char *experimentName, char *name) {
     static size_t runCounter = 1;
 
     // генерация последовательности
-    static int innerBuffer[100000];
+    static int innerBuffer[50000000];
     generateFunc(innerBuffer, size);
     printf("Run #%zu| ", runCounter++);
     printf("Name: %s\n", experimentName);
 
-    // замер времени
     long long nComps = nComp(innerBuffer, size);
 
-    // результаты замера
     printf("Status: ");
     if (isOrdered(innerBuffer, size)) {
         printf("OK! Comps: %lld\n", nComps);
@@ -108,43 +104,33 @@ void checkNComp(long long (*nComp )(int *a, size_t n),
     } else {
         printf("Wrong!\n");
 
-        // вывод массива, который не смог быть отсортирован
         outputArray(innerBuffer, size);
 
         exit(1);
     }
 }
 
+GeneratingFunc generatingFuncs[] = {
+ //       {generateRandomArray,      "random"},
+        {generateOrderedArray,     "ordered"},
+  //      {generateOrderedBackwards, "orderedBackwards"}
+};
 
 void timeExperiment() {
     SortFunc sorts[] = {
             //{selectionSort, "selectionSort"},
-            //{insertionSort, "insertionSort"},
+            {insertionSort, "insertionSort"},
             //{bubbleSort, "bubbleSort"},
-            //{combsort, "combsort"},
-            //{shellSort, "shellSort"},
-            //{radixSort, "radixSort"},
+           // {combsort, "combsort"},
+          //  {shellSort, "shellSort"},
+           // {radixSort, "radixSort"},
 // вы добавите свои сортировки
     };
     const unsigned FUNCS_N = ARRAY_SIZE(sorts);
-    GeneratingFunc generatingFuncs[] = {
-            {generateRandomArray,      "random"},
-            {generateOrderedArray,     "ordered"},
-            {generateOrderedBackwards, "orderedBackwards"}
-    };
+
     const unsigned CASES_N = ARRAY_SIZE(generatingFuncs);
 
-    CompCountFunc nComps[] = {
-            {selectionSortN, "selectionSortN"},
-            {insertionSortN, "insertionSortN"},
-            {bubbleSortN,    "bubbleSortN"},
-            {combsortN,      "combSortN"},
-            {shellSortN,     "shellSortN"},
-    };
-
-    const unsigned COMPS_N = ARRAY_SIZE(nComps);
-
-    for (size_t size = 10000; size <= 100000; size += 10000) {
+    for (size_t size = 10000000; size <= 50000000; size += 10000000) {
         printf(" ------------------------------\n");
         printf(" Size : %d\n", size);
         for (int i = 0; i < FUNCS_N; i++)
@@ -155,16 +141,30 @@ void timeExperiment() {
                 checkTime(sorts[i].sort, generatingFuncs[j].generate, size, filename);
             }
     }
+
     printf("\n");
+}
 
 
-            // запись статистики в файл
-    for (size_t size = 10000; size <= 100000; size += 10000) {
+void compExperiment() {
+    CompCountFunc nComps[] = {
+//            {selectionSortN, "selectionSortN"},
+//            {insertionSortN, "insertionSortN"},
+//            {bubbleSortN,    "bubbleSortN"},
+            {combsortN, "combSortN"},
+//            {shellSortN,     "shellSortN"},
+    };
+
+    const unsigned COMPS_N = ARRAY_SIZE(nComps);
+    const unsigned CASES_N = ARRAY_SIZE(generatingFuncs);
+
+    // запись статистики в файл
+    for (size_t size = 1000; size <= 10000; size += 1000) {
         printf(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
         printf("Size : %d\n", size);
-        for (int i = 0; i < COMPS_N; i++) {
+        for (int i = 0; i < COMPS_N; i++)
             for (int j = 0; j < CASES_N; j++) {
-            // генерация имени файла
+                // генерация имени файла
                 static char filename[128];
                 sprintf(filename, "%s_%s_comps",
                         nComps[i].name, generatingFuncs[j].name);
@@ -172,14 +172,14 @@ void timeExperiment() {
                            generatingFuncs[j].generate,
                            size, filename, nComps[i].name);
             }
-        }
+
         printf("\n");
     }
 }
 
 int main() {
     timeExperiment();
-
+    //compExperiment();
 
     return 0;
 }

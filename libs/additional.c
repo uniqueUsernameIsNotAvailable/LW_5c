@@ -3,11 +3,6 @@
 #include <time.h>
 #include "additional.h"
 
-void inputArray(int *a, size_t size) {
-    for (size_t i = 0; i < size; i++)
-        scanf("%d", &a[i]);
-}
-
 void outputArray(int *a, size_t n) {
     for (size_t i = 0; i < n; i++)
         printf("%lld ", a[i]);
@@ -33,22 +28,14 @@ void generateRandomArray(int *a, size_t size) {
         a[i] = 100000 - rand() % 100000;
 }
 
-int cmp(const void *a, const void *b) {
-    return *(const int *) a - *(const int *) b;
-}
-
-int cmpReverse(const void *a, const void *b) {
-    return *(const int *) b - *(const int *) a;
-}
-
 void generateOrderedArray(int *a, size_t size) {
-    generateRandomArray(a, size);
-    qsort(a, size, sizeof(int), cmp);
+    for (size_t i = 0; i < size; ++i)
+        a[i] = i;
 }
 
-void generateOrderedBackwards(int *a, size_t size) {
-    generateRandomArray(a, size);
-    qsort(a, size, sizeof(int), cmpReverse);
+void generateOrderedBackwards(int *a, size_t size){
+    for (size_t i = size; i > 0; --i)
+        a[i] = i;
 }
 
 void selectionSort(int *a, size_t size) {
